@@ -1,0 +1,8 @@
+{
+  "extends": "@antfu",
+  "ignorePatterns": ["example"],
+  "rules": {
+    "no-cond-assign": "off",
+    "no-console": "off"
+  }
+}
