@@ -8,6 +8,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@ws-pkg/core": "workspace:../packages/core"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.1.16",

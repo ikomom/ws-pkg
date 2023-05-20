@@ -1,5 +1,5 @@
 {
-  "name": "ik-typing-machine",
+  "name": "@ws-pkg/core",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@7.12.0",
