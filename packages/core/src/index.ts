@@ -2,8 +2,18 @@ import HeartCheck from './HeartCheck'
 import Mitt from './Mitt'
 import { getWebsocket } from './utils'
 
-export type WsClientEmitEvent = 'notify' | 'onerror' | 'notifyError'
+export type WsClientEmitEvent =
+  'notify' |
+  'onerror' |
+  'notifyError' |
+  'onclose' |
+  'onopen' |
+  'reconnection'
 
+const baseOpt = {
+  reconnectionTime: 3000,
+  heartTime: 15000,
+}
 export class WsClient {
   url: string
 
@@ -21,8 +31,11 @@ export class WsClient {
   // error stack
   errorStack: string[] = []
 
-  constructor(url: string) {
+  options: typeof baseOpt
+
+  constructor(url: string, opt?: Partial<typeof baseOpt>) {
     this.url = url
+    this.options = { ...baseOpt, ...opt }
     this.mitt = new Mitt()
     this.createWebSocket()
   }
@@ -30,7 +43,7 @@ export class WsClient {
   createWebSocket() {
     const Socket = getWebsocket()
     this.ws = new Socket(this.url)
-    this.heartCheck = new HeartCheck()
+    this.heartCheck = new HeartCheck(this.options.heartTime)
     this.onopen()
     this.onopen()
     this.onerror()
@@ -39,8 +52,8 @@ export class WsClient {
   }
 
   private onopen() {
-    this.ws!.onopen = () => {
-      console.log('websocket onopen')
+    this.ws!.onopen = (ev) => {
+      this.mitt.emit('onopen', ev)
       this.errorStack.forEach((message) => {
         this.send(message)
       })
@@ -61,9 +74,10 @@ export class WsClient {
 
   private onclose() {
     this.ws!.onclose = () => {
+      // console.log('[websocket onclose]', this.isCustomClose)
+      this.mitt.emit('onclose', this.isCustomClose)
       if (this.isCustomClose)
         return
-      // 重新连接
       this.reconnection()
       this.isReconnectionLoading = false
     }
@@ -75,8 +89,9 @@ export class WsClient {
         const data = event.data
         // reset HeartCheck
         this.heartCheck.reset().start(this.ws!)
-        if (data.data === 'pong')
+        if (data === '#PONG')
           return
+        // console.log('[websocket onmessage]', data)
         // send message
         this.mitt.emit('notify', data)
       }
@@ -87,24 +102,29 @@ export class WsClient {
     }
   }
 
-  // 重新链接
   reconnection() {
     if (this.isReconnectionLoading)
       return
     this.isReconnectionLoading = true
+    this.mitt.emit('reconnection')
     window.clearTimeout(this.timeId)
     this.timeId = window.setTimeout(() => {
       this.createWebSocket()
-    }, 3000)
+    }, this.options.reconnectionTime)
   }
 
   send(message: string) {
+    console.log('====', this.readyState)
     // connect fail
-    if (this.ws!.readyState !== 1) {
+    if (this.readyState !== 1) {
       this.errorStack.push(message)
       return
     }
     this.ws!.send(message)
+  }
+
+  get readyState() {
+    return this.ws?.readyState ?? -1
   }
 
   on(eventName: WsClientEmitEvent, func: (...args: any[]) => void) {
@@ -115,13 +135,17 @@ export class WsClient {
     this.mitt.off(eventName, func)
   }
 
-  // 手动关闭
+  /**
+   * custom close current ws
+   */
   close() {
     this.isCustomClose = true
     this.ws!.close()
   }
 
-  // 销毁
+  /**
+   * close and clear all
+   */
   destroy() {
     this.close()
     this.ws = null

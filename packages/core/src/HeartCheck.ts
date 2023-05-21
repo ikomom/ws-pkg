@@ -1,7 +1,9 @@
 class HeartCheck {
-  private timeout = 1000 * 6
   private timeoutObj = -1
   private serverTimeoutObj = -1
+
+  constructor(private timeout = 6 * 1000) {
+  }
 
   reset() {
     if (this.timeoutObj > 0) {
@@ -17,7 +19,7 @@ class HeartCheck {
 
   start(socket: WebSocket) {
     this.timeoutObj = window.setTimeout(() => {
-      socket.send('ping')
+      socket.send('#PING')
       this.serverTimeoutObj = window.setTimeout(() => {
         // when close, reconnect is trigger
         socket.close()

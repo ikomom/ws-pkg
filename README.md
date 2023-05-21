@@ -1,6 +1,24 @@
 # ws-pkg
 
-websocket client and server
+websocket client and server, for interview
+
+# init
+
+```shell
+pnpm i
+```
+
+run test node server
+
+```shell
+pnpm run server
+```
+
+run playground
+
+```shell
+pnpm run play # 
+```
 
 ## License
 

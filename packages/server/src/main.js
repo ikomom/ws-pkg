@@ -1,16 +1,19 @@
-const WebSocket = require('ws')
+// function sockIoTest() {
+//   const http = require('node:http')
+//   const sockjs = require('sockjs')
+//
+//   const echo = sockjs.createServer()
+//   echo.on('connection', (conn) => {
+//     conn.on('data', (message) => {
+//       conn.write(message)
+//     })
+//     conn.on('close', () => {})
+//   })
+//
+//   const server = http.createServer()
+//   echo.installHandlers(server, { prefix: '/echo' })
+//   server.listen(9999, '0.0.0.0')
+// }
 
-const wss = new WebSocket.Server({ port: 9888 })
-
-wss.on('connection', (ws) => {
-  console.log('server : receive connection.', wss.clients)
-
-  ws.on('message', (message) => {
-    console.log('server: received message: %s', message)
-    ws.send('reply')
-  })
-
-  ws.on('close', () => {
-    console.log('websocket close ', wss.clients)
-  })
-})
+// sockIoTest()
+require('./ws.js')
