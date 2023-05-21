@@ -2,7 +2,7 @@
 
 websocket client and server, for interview
 
-# init
+# Init
 
 ```shell
 pnpm i
@@ -17,7 +17,7 @@ pnpm run server
 run playground
 
 ```shell
-pnpm run play # 
+pnpm run play
 ```
 
 ## License

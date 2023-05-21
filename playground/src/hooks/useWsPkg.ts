@@ -12,6 +12,7 @@ export function useWsPkg(url: string, option?: Partial<typeof baseOpt>) {
   // socket 消息
   const socketData = ref<unknown[]>([])
   const connected = ref(false)
+  const status = ref()
 
   const destroyWs = () => {
     if (instance) {
@@ -33,13 +34,16 @@ export function useWsPkg(url: string, option?: Partial<typeof baseOpt>) {
     })
     instance.on('onopen', () => {
       connected.value = true
+      status.value = undefined
     })
     instance.on('onerror', (ev) => {
       console.log('[useWsPkg onerror]', ev)
       connected.value = false
+      status.value = ev
     })
-    instance.on('onclose', (...args) => {
-      console.log('[useWsPkg onclose]', args)
+    instance.on('onclose', (data) => {
+      console.log('[useWsPkg onclose]', data)
+      status.value = data
       connected.value = false
     })
   }
@@ -53,6 +57,7 @@ export function useWsPkg(url: string, option?: Partial<typeof baseOpt>) {
   return {
     connected,
     socketData,
+    status,
     initWs,
     destroyWs,
     sendWs,

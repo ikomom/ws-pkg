@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useWsPkg } from '../../hooks/useWsPkg'
 
-const { sendWs, socketData, destroyWs, initWs, connected } = useWsPkg(import.meta.env.VITE_WEBSOCKET_URL)
+const { sendWs, socketData, destroyWs, initWs, connected, status } = useWsPkg(import.meta.env.VITE_WEBSOCKET_URL)
 const msg = ref()
 </script>
 
@@ -14,14 +14,16 @@ const msg = ref()
         </li>
       </ul>
       <div flex-1 p-3>
-        {{ connected }}
+        <p mb-2>
+          connected:  {{ connected }}
+        </p>
         <template v-if="connected">
           <input v-model="msg" b="1 red" mx-1>
           <button btn mx-1 @click="sendWs(msg) ">
             发送
           </button>
           <button btn mx-1 @click="sendWs('#CLOSE') ">
-            发送断开命令
+            发送断开ping命令
           </button>
           <button btn mx-1 @click="destroyWs()">
             断开连接
@@ -30,6 +32,9 @@ const msg = ref()
         <button v-else btn mx-1 @click="initWs()">
           重新连接
         </button>
+        <div v-if="status" p-3 bg-red text-white my-2>
+          {{ status }}
+        </div>
       </div>
     </div>
   </div>

@@ -1,12 +1,6 @@
 <script setup lang="ts">
 const ws = new WebSocket('ws://localhost:9888')
 
-const WebSocketState = {
-  CONNECTING: 0,
-  OPEN: 1,
-  CLOSING: 2,
-  CLOSED: 3,
-}
 ws.onopen = (ev) => {
   console.log('onopen', { ev, ws })
 }

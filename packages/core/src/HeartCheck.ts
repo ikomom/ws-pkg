@@ -20,6 +20,7 @@ class HeartCheck {
   start(socket: WebSocket) {
     this.timeoutObj = window.setTimeout(() => {
       socket.send('#PING')
+      // console.log('[websocket ping]', socket.bufferedAmount)
       this.serverTimeoutObj = window.setTimeout(() => {
         // when close, reconnect is trigger
         socket.close()
