@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import MineWs from './views/ws-pkg-test/MineWs.vue'
+import TestEmittery from './views/TestEmittery.vue'
 </script>
 
 <template>
   <div font-sans leading-1em>
     <!--    <IoTest /> -->
-    <MineWs />
+    <!--    <MineWs /> -->
+    <TestEmittery />
   </div>
 </template>
